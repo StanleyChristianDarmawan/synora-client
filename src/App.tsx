@@ -7,6 +7,7 @@ import LoginPage from '@/pages/auth/Login';
 import RegisterPage from '@/pages/auth/Register';
 import { AuthLayout } from '@/components/layout/AuthLayout';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { ChatLayout } from '@/components/layout/ChatLayout';
 import DashboardPage from '@/pages/dashboard/Dashboard';
 import ChatPage from '@/pages/dashboard/Chat';
 import CheckinPage from '@/pages/dashboard/Checkin';
@@ -28,11 +29,14 @@ function App() {
           
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/chat" element={<ChatPage />} />
             <Route path="/checkin" element={<CheckinPage />} />
             <Route path="/reflection" element={<ReflectionPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+
+          <Route element={<ChatLayout />}>
+            <Route path="/chat" element={<ChatPage />} />
           </Route>
         </Routes>
       </Router>
