@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Edit3, MessageCircle, BarChart2, Settings, LogOut } from 'lucide-react';
+import { Home, Edit3, MessageCircle, BarChart2, Settings, LogOut, Stethoscope } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { AuthService } from '@/services/auth.service';
@@ -10,6 +10,7 @@ export function Sidebar({ className }: { className?: string }) {
     { name: 'Journal', icon: Edit3, href: '/history' },
     { name: 'Reflection', icon: BarChart2, href: '/reflection' },
     { name: 'Synora AI', icon: MessageCircle, href: '/chat' },
+    { name: 'Consulting', icon: Stethoscope, href: '/consulting' },
     { name: 'Settings', icon: Settings, href: '/profile' },
   ];
 
@@ -38,7 +39,7 @@ export function Sidebar({ className }: { className?: string }) {
           <Link
             key={menu.name}
             to={menu.href}
-            className="flex items-center space-x-3 px-4 py-3 text-zinc-600 rounded-2xl hover:bg-zinc-50 hover:text-teal-600 transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
           >
             <menu.icon className="w-5 h-5" />
             <span className="font-medium">{menu.name}</span>

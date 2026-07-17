@@ -4,6 +4,10 @@ import { persist } from 'zustand/middleware';
 interface User {
   id: string;
   email: string;
+  current_streak?: number;
+  emergency_name?: string;
+  emergency_email?: string;
+  [key: string]: any;
 }
 
 interface AuthState {

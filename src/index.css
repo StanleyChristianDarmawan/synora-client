@@ -7,6 +7,7 @@
 }
 
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -14,10 +15,18 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
-  
+
   body {
     background-color: #FAFAFA;
     color: #18181b;
     font-family: var(--font-sans);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    background-color: #09090b;
+    color: #fafafa;
   }
 }
+
+@custom-variant dark (&:where(.dark, .dark *));

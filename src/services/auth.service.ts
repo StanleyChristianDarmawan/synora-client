@@ -20,5 +20,9 @@ export const AuthService = {
   changePassword: async (data: any) => {
     const response = await api.post('/auth/change-password', data);
     return response.data;
+  },
+  updateEmergencyContact: async (data: { emergency_name: string, emergency_email: string }) => {
+    const response = await api.put('/auth/emergency-contact', data);
+    return response.data;
   }
 };

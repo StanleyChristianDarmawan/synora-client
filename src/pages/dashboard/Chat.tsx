@@ -166,8 +166,8 @@ export default function ChatPage() {
   return (
     <div className="h-full flex flex-col md:flex-row">
 
-      <div className="w-full md:w-72 flex-shrink-0 flex flex-col bg-white border-r border-zinc-100 overflow-hidden h-full">
-        <div className="p-4 border-b border-zinc-100">
+      <div className="w-full md:w-72 flex-shrink-0 flex flex-col bg-white dark:bg-zinc-950 border-r border-zinc-100 dark:border-zinc-800 overflow-hidden h-full">
+        <div className="p-4 border-b border-zinc-100 dark:border-zinc-800">
           <Button
             onClick={startNewChat}
             className="w-full flex items-center justify-center space-x-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl h-12"
@@ -188,7 +188,7 @@ export default function ChatPage() {
             sessions?.map((session: any) => (
               <div
                 key={session.id}
-                className={`group relative flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${activeSessionId === session.id ? 'bg-teal-50' : 'hover:bg-zinc-50'
+                className={`group relative flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${activeSessionId === session.id ? 'bg-teal-50 dark:bg-teal-900/30' : 'hover:bg-zinc-50 dark:hover:bg-zinc-900'
                   }`}
                 onClick={() => {
                   if (editingSessionId !== session.id) {
@@ -205,7 +205,7 @@ export default function ChatPage() {
                         type="text"
                         value={editTitle}
                         onChange={(e) => setEditTitle(e.target.value)}
-                        className="flex-1 text-sm bg-white border border-teal-200 rounded px-2 py-1 outline-none"
+                        className="flex-1 text-sm bg-white dark:bg-zinc-900 border border-teal-200 dark:border-teal-800 text-zinc-900 dark:text-zinc-50 rounded px-2 py-1 outline-none"
                         autoFocus
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') renameMutation.mutate({ id: session.id, title: editTitle });
@@ -220,7 +220,7 @@ export default function ChatPage() {
                       </button>
                     </div>
                   ) : (
-                    <span className={`text-sm truncate font-medium ${activeSessionId === session.id ? 'text-teal-900' : 'text-zinc-700'}`}>
+                    <span className={`text-sm truncate font-medium ${activeSessionId === session.id ? 'text-teal-900 dark:text-teal-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                       {session.title}
                     </span>
                   )}
@@ -229,7 +229,7 @@ export default function ChatPage() {
                 {editingSessionId !== session.id && (
                   <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity space-x-1">
                     <button
-                      className="p-1.5 text-zinc-400 hover:text-teal-600 rounded-md hover:bg-white"
+                      className="p-1.5 text-zinc-400 hover:text-teal-600 dark:hover:text-teal-400 rounded-md hover:bg-white dark:hover:bg-zinc-800"
                       onClick={(e) => {
                         e.stopPropagation();
                         setEditTitle(session.title);
@@ -239,7 +239,7 @@ export default function ChatPage() {
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      className="p-1.5 text-zinc-400 hover:text-rose-600 rounded-md hover:bg-white"
+                      className="p-1.5 text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-md hover:bg-white dark:hover:bg-zinc-800"
                       onClick={(e) => {
                         e.stopPropagation();
                         if (confirm('Are you sure you want to delete this chat?')) {
@@ -257,10 +257,10 @@ export default function ChatPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col h-full bg-[#FAFAFA] overflow-hidden">
-        <div className="px-6 py-3 border-b border-zinc-100 bg-white">
-          <h1 className="text-base font-bold text-zinc-900">Synora AI</h1>
-          <p className="text-xs text-zinc-400">Your safe space for reflection.</p>
+      <div className="flex-1 flex flex-col h-full bg-[#FAFAFA] dark:bg-zinc-900 overflow-hidden">
+        <div className="px-6 py-3 border-b border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+          <h1 className="text-base font-bold text-zinc-900 dark:text-zinc-50">Synora AI</h1>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">Your safe space for reflection.</p>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
@@ -270,10 +270,10 @@ export default function ChatPage() {
 
           {isTyping && (
             <div className="flex w-full space-x-4 mb-6 justify-start">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center border border-teal-200 mt-1 animate-pulse">
-                <div className="w-2 h-2 bg-teal-600 rounded-full" />
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center border border-teal-200 dark:border-teal-800 mt-1 animate-pulse">
+                <div className="w-2 h-2 bg-teal-600 dark:bg-teal-400 rounded-full" />
               </div>
-              <div className="px-5 py-3 rounded-2xl bg-white border border-zinc-100 rounded-bl-none shadow-sm flex items-center space-x-1">
+              <div className="px-5 py-3 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 rounded-bl-none shadow-sm flex items-center space-x-1">
                 <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                 <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -283,13 +283,13 @@ export default function ChatPage() {
           <div ref={endOfMessagesRef} />
         </div>
 
-        <div className="px-6 py-3 bg-white border-t border-zinc-100">
+        <div className="px-6 py-3 bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-800">
           <form onSubmit={handleSend} className="flex space-x-3 items-center">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message here..."
-              className="flex-1 rounded-full h-12 bg-zinc-50 focus-visible:ring-1 focus-visible:ring-teal-500 border-zinc-200"
+              className="flex-1 rounded-full h-12 bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 focus-visible:ring-1 focus-visible:ring-teal-500"
             />
             <Button
               type="submit"

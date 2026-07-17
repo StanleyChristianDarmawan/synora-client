@@ -11,7 +11,7 @@ export function DashboardLayout() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] dark:bg-zinc-950 transition-colors duration-300">
       <Navbar />
       <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8">
         <Outlet />
