@@ -1,16 +1,52 @@
 import { useAuthStore } from '@/stores/auth.store';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Bell, Shield, Moon, LogOut } from 'lucide-react';
+import { User, Bell, Shield, Moon, LogOut, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { AuthService } from '@/services/auth.service';
 
 export default function ProfilePage() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
 
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChanging, setIsChanging] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handlePasswordChange = async () => {
+    setErrorMsg('');
+    setSuccessMsg('');
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setErrorMsg('All fields are required');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setErrorMsg('New passwords do not match');
+      return;
+    }
+    setIsChanging(true);
+    try {
+      await AuthService.changePassword({ old_password: oldPassword, new_password: newPassword });
+      setSuccessMsg('Password changed successfully');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => setShowPasswordChange(false), 2000);
+    } catch (error: any) {
+      setErrorMsg(error.response?.data?.detail || 'Failed to change password');
+    } finally {
+      setIsChanging(false);
+    }
   };
 
   return (
@@ -74,49 +110,93 @@ export default function ProfilePage() {
             </Card>
 
             <Card className="border border-zinc-100 shadow-sm transition-shadow hover:shadow-md cursor-pointer">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-                    <Shield className="w-5 h-5" />
+              <CardContent className="p-0">
+                <div className="p-4 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                      <Shield className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-zinc-900">Privacy & Security</h4>
+                      <p className="text-sm text-zinc-500">Data and sessions</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-medium text-zinc-900">Privacy & Security</h4>
-                    <p className="text-sm text-zinc-500">Data and sessions</p>
-                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowPasswordChange(!showPasswordChange)}
+                  >
+                    Manage
+                  </Button>
                 </div>
-                <Button variant="outline" size="sm">Manage</Button>
+                
+                {showPasswordChange && (
+                  <div className="px-4 pb-6 pt-2 border-t border-zinc-100">
+                    <div className="max-w-md space-y-4">
+                      <div>
+                        <h3 className="font-medium text-zinc-900 mb-1">Change Password</h3>
+                        <p className="text-sm text-zinc-500 mb-4">Update your password to keep your account secure.</p>
+                      </div>
+
+                      {errorMsg && (
+                        <div className="p-3 bg-rose-50 text-rose-600 text-sm rounded-lg flex items-center">
+                          <AlertCircle className="w-4 h-4 mr-2" />
+                          {errorMsg}
+                        </div>
+                      )}
+                      
+                      {successMsg && (
+                        <div className="p-3 bg-green-50 text-green-600 text-sm rounded-lg flex items-center">
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          {successMsg}
+                        </div>
+                      )}
+
+                      <div className="space-y-3">
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-zinc-700">Current Password</label>
+                          <input 
+                            type="password" 
+                            placeholder="Enter current password" 
+                            className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                            value={oldPassword}
+                            onChange={(e) => setOldPassword(e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-zinc-700">New Password</label>
+                          <input 
+                            type="password" 
+                            placeholder="Enter new password" 
+                            className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-zinc-700">Confirm New Password</label>
+                          <input 
+                            type="password" 
+                            placeholder="Confirm new password" 
+                            className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                          />
+                        </div>
+                        <Button 
+                          className="w-full bg-teal-600 hover:bg-teal-700 text-white mt-2"
+                          onClick={handlePasswordChange}
+                          disabled={isChanging}
+                        >
+                          {isChanging ? 'Updating...' : 'Update Password'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-zinc-800 mb-4">Security</h2>
-          <Card className="border border-zinc-100 shadow-sm">
-            <CardContent className="p-6 space-y-4">
-              <div>
-                <h3 className="font-medium text-zinc-900 mb-1">Change Password</h3>
-                <p className="text-sm text-zinc-500 mb-4">Update your password to keep your account secure.</p>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-zinc-700">Current Password</label>
-                  <input type="password" placeholder="Enter current password" className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-zinc-700">New Password</label>
-                  <input type="password" placeholder="Enter new password" className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-zinc-700">Confirm New Password</label>
-                  <input type="password" placeholder="Confirm new password" className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
-                </div>
-                <Button className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white">
-                  Update Password
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </section>
 
         <section className="pt-4 border-t border-zinc-100 mt-8">
