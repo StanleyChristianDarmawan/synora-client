@@ -38,9 +38,8 @@ export function Navbar() {
 
   return (
     <header className="h-16 bg-white border-b border-zinc-100 flex items-center px-6 sticky top-0 z-40 shadow-sm relative">
-      <div className="flex flex-col w-32">
-        <h1 className="text-xl font-bold text-teal-700 leading-none">Synora</h1>
-        <p className="text-[10px] text-zinc-400 mt-1 font-medium tracking-wide uppercase">Wellness AI</p>
+      <div className="flex items-center w-32">
+        <img src="/synoraLogo2.png" alt="Synora" className="h-8 object-contain" />
       </div>
 
       <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center space-x-2">

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Frown, Annoyed, Meh, Smile, Laugh } from 'lucide-react';
+
 import { useQuery } from '@tanstack/react-query';
 import { JournalService } from '@/services/journal.service';
 import { format } from 'date-fns';
@@ -8,11 +8,11 @@ import { Calendar } from '@/components/ui/calendar';
 import { parseUTC } from '@/lib/utils';
 
 const getMoodEmoji = (mood: number) => {
-  if (mood === 1) return <Frown className="w-4 h-4 text-rose-500" />;
-  if (mood === 2) return <Annoyed className="w-4 h-4 text-orange-500" />;
-  if (mood === 3) return <Meh className="w-4 h-4 text-zinc-500" />;
-  if (mood === 4) return <Smile className="w-4 h-4 text-teal-500" />;
-  return <Laugh className="w-4 h-4 text-green-500" />;
+  if (mood === 1) return <img src="/sad.png" className="w-7 h-7 object-contain" alt="Sad" />;
+  if (mood === 2) return <img src="/no.png" className="w-7 h-7 object-contain" alt="No" />;
+  if (mood === 3) return <img src="/neutral.png" className="w-7 h-7 object-contain" alt="Neutral" />;
+  if (mood === 4) return <img src="/happy.png" className="w-7 h-7 object-contain" alt="Happy" />;
+  return <img src="/amazing.png" className="w-7 h-7 object-contain" alt="Amazing" />;
 };
 
 export default function HistoryPage() {

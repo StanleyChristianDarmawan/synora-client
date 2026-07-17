@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Flame, Frown, Annoyed, Meh, Smile, Laugh, CheckCircle2, Edit3, Target } from 'lucide-react';
+import { MessageCircle, Flame, Frown, Annoyed, Meh, Smile, Laugh, CheckCircle2, Edit3, Target, Edit } from 'lucide-react';
 import { TrendChart } from '@/components/features/trend-chart';
 import { AILoadingIndicator } from '@/components/features/ai-loading';
 import { Link } from 'react-router-dom';
@@ -66,7 +66,7 @@ export default function DashboardPage() {
   }
 
   let mentalPercentage = 0;
-  let MentalIcon = Meh;
+  let MentalIconSrc = '/neutral.png';
   let mentalColor = 'text-zinc-400';
   let mentalBg = 'bg-zinc-100';
 
@@ -82,11 +82,11 @@ export default function DashboardPage() {
     const avgScore = (mood + stressScore + energy + sleepScore) / 4;
     mentalPercentage = Math.round((avgScore / 5) * 100);
 
-    if (mentalPercentage >= 80) { MentalIcon = Laugh; mentalColor = 'text-green-500'; mentalBg = 'bg-green-50'; }
-    else if (mentalPercentage >= 60) { MentalIcon = Smile; mentalColor = 'text-teal-500'; mentalBg = 'bg-teal-50'; }
-    else if (mentalPercentage >= 40) { MentalIcon = Meh; mentalColor = 'text-zinc-500'; mentalBg = 'bg-zinc-50'; }
-    else if (mentalPercentage >= 20) { MentalIcon = Annoyed; mentalColor = 'text-orange-500'; mentalBg = 'bg-orange-50'; }
-    else { MentalIcon = Frown; mentalColor = 'text-rose-500'; mentalBg = 'bg-rose-50'; }
+    if (mentalPercentage >= 80) { MentalIconSrc = '/amazing.png'; mentalColor = 'text-green-500'; mentalBg = 'bg-green-50'; }
+    else if (mentalPercentage >= 60) { MentalIconSrc = '/happy.png'; mentalColor = 'text-teal-500'; mentalBg = 'bg-teal-50'; }
+    else if (mentalPercentage >= 40) { MentalIconSrc = '/neutral.png'; mentalColor = 'text-zinc-500'; mentalBg = 'bg-zinc-50'; }
+    else if (mentalPercentage >= 20) { MentalIconSrc = '/no.png'; mentalColor = 'text-orange-500'; mentalBg = 'bg-orange-50'; }
+    else { MentalIconSrc = '/sad.png'; mentalColor = 'text-rose-500'; mentalBg = 'bg-rose-50'; }
   }
 
   // Trend Chart Data (Group by day)
@@ -96,153 +96,165 @@ export default function DashboardPage() {
       const dateStr = format(parseUTC(j.created_at), 'yyyy-MM-dd');
       chartDataMap.set(dateStr, {
         day: format(parseUTC(j.created_at), 'EEE'),
+        date: dateStr,
         mood: j.checkin.mood,
         sleep: j.checkin.sleep_hours
       });
     });
   }
-  const chartData = Array.from(chartDataMap.values()).slice(-7);
-
+  const fullChartData = Array.from(chartDataMap.values());
   const latestJournal = journals?.[0];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-
+    <div className="max-w-6xl mx-auto space-y-8 pb-12">
       <div className="mb-2">
         <h1 className="text-3xl font-bold text-zinc-900">Good Morning, {user?.email?.split('@')[0] || 'User'}</h1>
         <p className="text-zinc-500 mt-2">Let's check in with yourself today.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-          <Card className="border-0 shadow-sm h-full flex flex-col justify-center items-center py-6">
-            <div className={`p-4 rounded-full ${streak > 0 ? 'bg-orange-50 text-orange-500' : 'bg-zinc-50 text-zinc-400'} mb-4`}>
-              <Flame className="w-8 h-8" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* Left Column (2/3 width) */}
+        <div className="lg:col-span-2 flex flex-col space-y-6">
+
+          {/* Next Step For You (Daily Affirmation replacement) */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Card className="border-0 shadow-sm h-[280px] bg-gradient-to-br from-[#e0f7f4] to-[#f4fcfa] overflow-hidden relative">
+              <div className="absolute inset-0 bg-white/20 backdrop-blur-3xl rounded-3xl mix-blend-overlay"></div>
+              <CardContent className="p-10 relative z-10 flex flex-col justify-center h-full">
+                <div className="flex items-center space-x-3 mb-6">
+                  <Target className="w-5 h-5 text-teal-700" />
+                  <h2 className="text-sm font-semibold tracking-wider text-teal-800 uppercase">Next Step For You</h2>
+                </div>
+                {isLoading ? (
+                  <div className="text-teal-700/50">Loading your next step...</div>
+                ) : !hasCheckedInToday ? (
+                  <p className="text-xl font-serif text-teal-800/60 leading-relaxed italic">
+                    You haven't checked in today.
+                  </p>
+                ) : latestJournal?.analysis?.recommendation ? (
+                  <p className="text-2xl font-serif text-teal-900 leading-relaxed max-w-xl">
+                    {latestJournal.analysis.recommendation}
+                  </p>
+                ) : (
+                  <AILoadingIndicator className="py-2 scale-90" />
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Trend Chart */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+            <div className="h-[320px]">
+              <TrendChart data={fullChartData} />
             </div>
-            <h3 className="text-3xl font-bold text-zinc-800">{streak}</h3>
-            <p className="text-zinc-500 text-sm mt-1">Day Streak</p>
-          </Card>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-          <Card className="border-0 shadow-sm h-full flex flex-col justify-center items-center py-6">
-            {hasCheckedInToday ? (
-              <>
-                <div className={`p-4 rounded-full ${mentalBg} ${mentalColor} mb-4`}>
-                  <MentalIcon className="w-8 h-8" />
-                </div>
-                <h3 className="text-3xl font-bold text-zinc-800">{mentalPercentage}%</h3>
-                <p className="text-zinc-500 text-sm mt-1">Mental State Today</p>
-              </>
-            ) : (
-              <div className="text-center px-4">
-                <div className="p-4 rounded-full bg-zinc-50 text-zinc-400 mb-4 inline-block">
-                  <Meh className="w-8 h-8" />
-                </div>
-                <p className="text-zinc-500 text-sm">Check in today to see your mental state.</p>
-              </div>
-            )}
-          </Card>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="flex flex-col space-y-4">
-          <Card className={`border-0 shadow-sm transition-shadow ${hasCheckedInToday ? 'bg-zinc-50' : 'bg-gradient-to-br from-teal-500 to-teal-700 text-white hover:shadow-md'}`}>
-            <CardContent className="p-6 flex flex-col items-start space-y-4">
-              <div className={`p-3 rounded-2xl ${hasCheckedInToday ? 'bg-zinc-200 text-zinc-500' : 'bg-white/20 text-white'}`}>
-                {hasCheckedInToday ? <CheckCircle2 className="w-6 h-6" /> : <Edit3 className="w-6 h-6" />}
-              </div>
-              <div>
-                <h3 className={`text-lg font-semibold ${hasCheckedInToday ? 'text-zinc-700' : 'text-white'}`}>Daily Check-in</h3>
-                <p className={`text-sm mt-1 ${hasCheckedInToday ? 'text-zinc-500' : 'text-teal-100'}`}>
-                  {hasCheckedInToday ? "You've checked in today." : "Take 1 minute to reflect."}
-                </p>
-              </div>
-              {!hasCheckedInToday && (
-                <Link to="/checkin" className="w-full mt-2">
-                  <Button className="w-full bg-white text-teal-700 hover:bg-zinc-50 rounded-xl">Start Check-in</Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Middle Row: Trend Chart & Quick Chat */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <TrendChart data={chartData} />
+          </motion.div>
         </div>
 
-        <div className="flex flex-col space-y-6">
-          <Card className="border-0 shadow-sm bg-zinc-900 text-zinc-50 flex-1">
-            <CardHeader>
-              <CardTitle className="text-zinc-100 font-medium">Latest Reflection</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex justify-center py-4 text-zinc-400 text-sm">Loading...</div>
-              ) : latestJournal?.analysis?.reflection ? (
-                <>
-                  <p className="text-zinc-300 text-sm leading-relaxed whitespace-pre-wrap">
+        {/* Right Column (1/3 width) */}
+        <div className="lg:col-span-1 flex flex-col space-y-6">
+
+          {/* Daily Check-in Card */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+            {hasCheckedInToday ? (
+              <Card className="border border-green-100 shadow-sm bg-green-50/50 opacity-80 cursor-default">
+                <CardContent className="p-6 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-green-900">Daily Check-in</h3>
+                    <p className="text-sm text-green-700/70 mt-1 font-medium">
+                      Completed for today!
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    <CheckCircle2 className="w-6 h-6" />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Link to="/checkin" className="block">
+                <Card className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer bg-gradient-to-r from-teal-500 to-teal-600 group transform hover:-translate-y-1">
+                  <CardContent className="p-6 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-white">Daily Check-in</h3>
+                      <p className="text-sm text-teal-50 mt-1 font-medium">
+                        Reflect on your day now →
+                      </p>
+                    </div>
+                    <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:bg-white group-hover:text-teal-600 transition-colors">
+                      <Edit className="w-5 h-5" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
+          </motion.div>
+
+          {/* Day Streak Card */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+            <Card className="border border-zinc-100 shadow-sm bg-white">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-zinc-900">Day Streak</h3>
+                  <p className="text-sm text-zinc-500 mt-1">Keep up the consistency</p>
+                </div>
+                <div className="flex items-center space-x-1 px-4 py-2 rounded-full bg-[#fff4f0] text-orange-500 font-bold">
+                  <span className="text-xl">{streak}</span>
+                  <Flame className="w-6 h-6" />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Mental State Today Card */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+            <Card className="border border-zinc-100 shadow-sm bg-white">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-zinc-900">Mental State</h3>
+                  <p className="text-sm text-zinc-500 mt-1">
+                    {hasCheckedInToday ? "Your score today" : "You haven't checked in today."}
+                  </p>
+                </div>
+                {hasCheckedInToday ? (
+                  <div className={`flex items-center space-x-2 px-4 py-2 rounded-full ${mentalBg} ${mentalColor} font-bold`}>
+                    <span className="text-xl">{mentalPercentage}%</span>
+                    <img src={MentalIconSrc} alt="Mental State" className="w-8 h-8 object-contain" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-zinc-100 text-zinc-400 flex items-center justify-center">
+                    <img src="/neutral.png" alt="No data" className="w-8 h-8 opacity-50 grayscale object-contain" />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Latest Reflection Card */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }} className="flex-1">
+            <Card className="border border-zinc-100 shadow-sm bg-[#fafafa] h-full flex flex-col">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-sm font-semibold tracking-wider text-zinc-500 uppercase">Latest Reflection</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1">
+                {isLoading ? (
+                  <div className="text-zinc-400 text-sm">Loading...</div>
+                ) : !hasCheckedInToday ? (
+                  <div className="text-zinc-400 text-sm italic">
+                    You haven't checked in today.
+                  </div>
+                ) : latestJournal?.analysis?.reflection ? (
+                  <p className="text-zinc-700 text-sm leading-relaxed whitespace-pre-wrap">
                     "{latestJournal.analysis.reflection}"
                   </p>
-                  <p className="text-xs text-zinc-500 mt-6">- Synora AI</p>
-                </>
-              ) : latestJournal && !latestJournal.analysis ? (
-                <AILoadingIndicator className="py-2 scale-90" />
-              ) : (
-                <div className="text-zinc-400 text-sm italic py-4">
-                  "Complete a check-in today to receive your personalized reflection from Synora."
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                ) : (
+                  <AILoadingIndicator className="py-2 scale-90" />
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-indigo-50 to-indigo-100/50">
-            <CardHeader className="pb-2">
-              <div className="flex items-center space-x-2">
-                <div className="p-1.5 bg-indigo-200 text-indigo-700 rounded-lg">
-                  <Target className="w-4 h-4" />
-                </div>
-                <CardTitle className="text-sm font-semibold text-indigo-900">Next Step For You</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex justify-center py-4 text-indigo-400 text-sm">Loading...</div>
-              ) : latestJournal?.analysis?.recommendation ? (
-                <p className="text-indigo-800 text-sm font-medium leading-relaxed">
-                  {latestJournal.analysis.recommendation}
-                </p>
-              ) : latestJournal && !latestJournal.analysis ? (
-                <AILoadingIndicator className="py-0 scale-75" />
-              ) : (
-                <p className="text-indigo-400 text-xs italic">
-                  Check-in to get a personalized suggestion.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-sm group hover:border-indigo-100 transition-colors">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:bg-indigo-100 transition-colors">
-                  <MessageCircle className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold text-zinc-800">Quick Chat</h3>
-                  <p className="text-zinc-500 text-xs mt-1">Talk to Synora about how you feel.</p>
-                </div>
-              </div>
-              <Link to="/chat">
-                <Button variant="ghost" className="rounded-full w-10 h-10 p-0 text-indigo-600 hover:bg-indigo-50">→</Button>
-              </Link>
-            </CardContent>
-          </Card>
         </div>
       </div>
-
     </div>
   );
 }

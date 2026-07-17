@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Frown, Annoyed, Meh, Smile, Laugh } from 'lucide-react';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -78,13 +78,13 @@ export default function CheckinPage() {
                       key={`mood-${val}`}
                       type="button"
                       onClick={() => setMood(val)}
-                      className={`flex-1 py-4 text-2xl transition-all rounded-xl ${mood === val ? 'bg-white shadow-sm border border-zinc-200 transform scale-105' : 'hover:bg-zinc-100 opacity-50 hover:opacity-100'}`}
+                      className={`flex-1 py-4 text-2xl transition-all rounded-xl ${mood === val ? (val === 1 ? 'bg-rose-100 shadow-sm border-rose-200' : val === 2 ? 'bg-orange-100 shadow-sm border-orange-200' : val === 3 ? 'bg-zinc-100 shadow-sm border-zinc-200' : val === 4 ? 'bg-teal-100 shadow-sm border-teal-200' : 'bg-green-100 shadow-sm border-green-200') + ' border transform scale-105' : 'hover:bg-zinc-200 opacity-50 hover:opacity-100'}`}
                     >
-                      {val === 1 ? <Frown className={`w-8 h-8 mx-auto ${mood === val ? 'text-rose-500' : 'text-zinc-400'}`} /> : 
-                       val === 2 ? <Annoyed className={`w-8 h-8 mx-auto ${mood === val ? 'text-orange-500' : 'text-zinc-400'}`} /> : 
-                       val === 3 ? <Meh className={`w-8 h-8 mx-auto ${mood === val ? 'text-zinc-500' : 'text-zinc-400'}`} /> : 
-                       val === 4 ? <Smile className={`w-8 h-8 mx-auto ${mood === val ? 'text-teal-500' : 'text-zinc-400'}`} /> : 
-                       <Laugh className={`w-8 h-8 mx-auto ${mood === val ? 'text-green-500' : 'text-zinc-400'}`} />}
+                      {val === 1 ? <img src="/sad.png" className={`w-10 h-10 mx-auto object-contain ${mood !== val && 'grayscale opacity-50'}`} alt="Sad" /> : 
+                       val === 2 ? <img src="/no.png" className={`w-10 h-10 mx-auto object-contain ${mood !== val && 'grayscale opacity-50'}`} alt="No" /> : 
+                       val === 3 ? <img src="/neutral.png" className={`w-10 h-10 mx-auto object-contain ${mood !== val && 'grayscale opacity-50'}`} alt="Neutral" /> : 
+                       val === 4 ? <img src="/happy.png" className={`w-10 h-10 mx-auto object-contain ${mood !== val && 'grayscale opacity-50'}`} alt="Happy" /> : 
+                       <img src="/amazing.png" className={`w-10 h-10 mx-auto object-contain ${mood !== val && 'grayscale opacity-50'}`} alt="Amazing" />}
                     </button>
                   ))}
                 </div>
