@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Loader2, Flame, Frown, Annoyed, Meh, Smile, Laugh, CheckCircle2, Edit3 } from 'lucide-react';
+import { MessageCircle, Flame, Frown, Annoyed, Meh, Smile, Laugh, CheckCircle2, Edit3, Target } from 'lucide-react';
 import { TrendChart } from '@/components/features/trend-chart';
+import { AILoadingIndicator } from '@/components/features/ai-loading';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { JournalService } from '@/services/journal.service';
@@ -12,7 +13,14 @@ import { parseUTC } from '@/lib/utils';
 export default function DashboardPage() {
   const { data: journals, isLoading } = useQuery({
     queryKey: ['journals'],
-    queryFn: () => JournalService.getJournals(50, 0)
+    queryFn: () => JournalService.getJournals(50, 0),
+    refetchInterval: (query) => {
+      const data = query.state.data as any[];
+      if (data && data.length > 0 && !data[0].analysis) {
+        return 3000;
+      }
+      return false;
+    }
   });
 
   // Calculate Streak
@@ -168,10 +176,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="flex flex-col items-center justify-center py-8 text-zinc-400">
-                  <Loader2 className="w-6 h-6 animate-spin mb-2" />
-                  <p className="text-sm">Loading insights...</p>
-                </div>
+                <div className="flex justify-center py-4 text-zinc-400 text-sm">Loading...</div>
               ) : latestJournal?.analysis?.reflection ? (
                 <>
                   <p className="text-zinc-300 text-sm leading-relaxed whitespace-pre-wrap">
@@ -180,13 +185,37 @@ export default function DashboardPage() {
                   <p className="text-xs text-zinc-500 mt-6">- Synora AI</p>
                 </>
               ) : latestJournal && !latestJournal.analysis ? (
-                <div className="text-zinc-400 text-sm italic py-4">
-                  "Your latest journal is currently being analyzed by Synora AI."
-                </div>
+                <AILoadingIndicator className="py-2 scale-90" />
               ) : (
                 <div className="text-zinc-400 text-sm italic py-4">
                   "Complete a check-in today to receive your personalized reflection from Synora."
                 </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-indigo-50 to-indigo-100/50">
+            <CardHeader className="pb-2">
+              <div className="flex items-center space-x-2">
+                <div className="p-1.5 bg-indigo-200 text-indigo-700 rounded-lg">
+                  <Target className="w-4 h-4" />
+                </div>
+                <CardTitle className="text-sm font-semibold text-indigo-900">Next Step For You</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center py-4 text-indigo-400 text-sm">Loading...</div>
+              ) : latestJournal?.analysis?.recommendation ? (
+                <p className="text-indigo-800 text-sm font-medium leading-relaxed">
+                  {latestJournal.analysis.recommendation}
+                </p>
+              ) : latestJournal && !latestJournal.analysis ? (
+                <AILoadingIndicator className="py-0 scale-75" />
+              ) : (
+                <p className="text-indigo-400 text-xs italic">
+                  Check-in to get a personalized suggestion.
+                </p>
               )}
             </CardContent>
           </Card>

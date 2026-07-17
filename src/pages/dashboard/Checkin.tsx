@@ -38,8 +38,8 @@ export default function CheckinPage() {
 
   const submitMutation = useMutation({
     mutationFn: JournalService.submitJournal,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['journals'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['journals'] });
       navigate('/dashboard');
     }
   });

@@ -1,13 +1,21 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, AlertTriangle, TrendingUp, Loader2 } from 'lucide-react';
+import { Lightbulb, AlertTriangle, TrendingUp } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { JournalService } from '@/services/journal.service';
+import { AILoadingIndicator } from '@/components/features/ai-loading';
 
 export default function ReflectionPage() {
   const { data: journals, isLoading } = useQuery({
     queryKey: ['journals'],
-    queryFn: () => JournalService.getJournals(1, 0)
+    queryFn: () => JournalService.getJournals(1, 0),
+    refetchInterval: (query) => {
+      const data = query.state.data as any[];
+      if (data && data.length > 0 && !data[0].analysis) {
+        return 3000;
+      }
+      return false;
+    }
   });
 
   const latestJournal = journals?.[0];
@@ -22,8 +30,7 @@ export default function ReflectionPage() {
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
-          <Loader2 className="w-8 h-8 animate-spin mb-4" />
-          <p>Loading your AI reflection...</p>
+          <p>Loading...</p>
         </div>
       ) : analysis ? (
         <div className="space-y-6">
@@ -77,10 +84,12 @@ export default function ReflectionPage() {
             </CardContent>
           </Card>
         </div>
+      ) : latestJournal && !analysis ? (
+        <AILoadingIndicator className="py-20" />
       ) : (
         <Card className="border-0 shadow-sm flex items-center justify-center py-20">
           <p className="text-zinc-500">
-            {latestJournal ? "Your journal is being analyzed by AI..." : "Please submit a check-in to get an AI reflection."}
+            Please submit a check-in to get an AI reflection.
           </p>
         </Card>
       )}
