@@ -7,12 +7,12 @@ import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { parseUTC } from '@/lib/utils';
 
-const getMoodEmoji = (mood: number) => {
-  if (mood === 1) return <img src="/sad.png" className="w-7 h-7 object-contain" alt="Sad" />;
-  if (mood === 2) return <img src="/no.png" className="w-7 h-7 object-contain" alt="No" />;
-  if (mood === 3) return <img src="/neutral.png" className="w-7 h-7 object-contain" alt="Neutral" />;
-  if (mood === 4) return <img src="/happy.png" className="w-7 h-7 object-contain" alt="Happy" />;
-  return <img src="/amazing.png" className="w-7 h-7 object-contain" alt="Amazing" />;
+const getMentalStateEmoji = (score: number) => {
+  if (score >= 80) return <img src="/amazing.png" className="w-7 h-7 object-contain" alt="Amazing" />;
+  if (score >= 60) return <img src="/happy.png" className="w-7 h-7 object-contain" alt="Happy" />;
+  if (score >= 50) return <img src="/neutral.png" className="w-7 h-7 object-contain" alt="Neutral" />;
+  if (score >= 40) return <img src="/no.png" className="w-7 h-7 object-contain" alt="No" />;
+  return <img src="/sad.png" className="w-7 h-7 object-contain" alt="Sad" />;
 };
 
 export default function HistoryPage() {
@@ -55,7 +55,7 @@ export default function HistoryPage() {
                 selectedJournals.map((item: any) => (
                   <div key={item._id || item.id} className="relative pl-8 group">
                     <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-sm shadow-sm group-hover:border-teal-500 group-hover:scale-110 transition-all">
-                      {getMoodEmoji(item.checkin.mood)}
+                      {getMentalStateEmoji(item.mental_state)}
                     </div>
                     <Card className="border-0 shadow-sm group-hover:shadow-md transition-shadow">
                       <CardContent className="p-5">

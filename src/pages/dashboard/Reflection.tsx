@@ -21,6 +21,37 @@ export default function ReflectionPage() {
   const latestJournal = journals?.[0];
   const analysis = latestJournal?.analysis;
 
+  const getRiskColors = (level: string = '') => {
+    const lowerLevel = level.toLowerCase();
+    if (lowerLevel.includes('high') || lowerLevel.includes('severe')) {
+      return {
+        bg: 'from-rose-50 to-white',
+        iconBg: 'bg-rose-100',
+        iconText: 'text-rose-700',
+        title: 'text-rose-950',
+        levelText: 'text-rose-600'
+      };
+    } else if (lowerLevel.includes('medium') || lowerLevel.includes('moderate')) {
+      return {
+        bg: 'from-orange-50 to-white',
+        iconBg: 'bg-orange-100',
+        iconText: 'text-orange-700',
+        title: 'text-orange-950',
+        levelText: 'text-orange-600'
+      };
+    } else {
+      return {
+        bg: 'from-green-50 to-white',
+        iconBg: 'bg-green-100',
+        iconText: 'text-green-700',
+        title: 'text-green-950',
+        levelText: 'text-green-600'
+      };
+    }
+  };
+
+  const riskColors = getRiskColors(analysis?.risk_level);
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
@@ -57,14 +88,14 @@ export default function ReflectionPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-orange-50 to-white">
+            <Card className={`border-0 shadow-sm bg-gradient-to-br ${riskColors.bg}`}>
               <CardHeader className="flex flex-row items-center space-x-3 pb-2">
-                <div className="p-2 bg-orange-100 rounded-lg text-orange-700"><AlertTriangle className="w-5 h-5" /></div>
-                <CardTitle className="text-lg text-orange-950">Risk Detection</CardTitle>
+                <div className={`p-2 rounded-lg ${riskColors.iconBg} ${riskColors.iconText}`}><AlertTriangle className="w-5 h-5" /></div>
+                <CardTitle className={`text-lg ${riskColors.title}`}>Risk Detection</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-zinc-600 leading-relaxed">
-                  <strong>Risk Level: {analysis.risk_level}</strong>
+                  <strong>Risk Level: <span className={`${riskColors.levelText} font-bold uppercase tracking-wider`}>{analysis.risk_level}</span></strong>
                   <br /><br />
                   {analysis.risk_reasoning || "No immediate signs of severe burnout detected. Keep maintaining your well-being."}
                 </p>

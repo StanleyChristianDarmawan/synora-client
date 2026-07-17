@@ -71,21 +71,12 @@ export default function DashboardPage() {
   let mentalBg = 'bg-zinc-100';
 
   if (todayJournal) {
-    const { mood, stress, energy, sleep_hours } = todayJournal.checkin;
-    let sleepScore = 1;
-    if (sleep_hours >= 7) sleepScore = 5;
-    else if (sleep_hours >= 6) sleepScore = 4;
-    else if (sleep_hours >= 5) sleepScore = 3;
-    else if (sleep_hours >= 4) sleepScore = 2;
-
-    const stressScore = 6 - stress;
-    const avgScore = (mood + stressScore + energy + sleepScore) / 4;
-    mentalPercentage = Math.round((avgScore / 5) * 100);
+    mentalPercentage = todayJournal.mental_state;
 
     if (mentalPercentage >= 80) { MentalIconSrc = '/amazing.png'; mentalColor = 'text-green-500'; mentalBg = 'bg-green-50'; }
     else if (mentalPercentage >= 60) { MentalIconSrc = '/happy.png'; mentalColor = 'text-teal-500'; mentalBg = 'bg-teal-50'; }
-    else if (mentalPercentage >= 40) { MentalIconSrc = '/neutral.png'; mentalColor = 'text-zinc-500'; mentalBg = 'bg-zinc-50'; }
-    else if (mentalPercentage >= 20) { MentalIconSrc = '/no.png'; mentalColor = 'text-orange-500'; mentalBg = 'bg-orange-50'; }
+    else if (mentalPercentage >= 50) { MentalIconSrc = '/neutral.png'; mentalColor = 'text-zinc-500'; mentalBg = 'bg-zinc-50'; }
+    else if (mentalPercentage >= 40) { MentalIconSrc = '/no.png'; mentalColor = 'text-orange-500'; mentalBg = 'bg-orange-50'; }
     else { MentalIconSrc = '/sad.png'; mentalColor = 'text-rose-500'; mentalBg = 'bg-rose-50'; }
   }
 
