@@ -9,8 +9,10 @@ import { useQuery } from '@tanstack/react-query';
 import { JournalService } from '@/services/journal.service';
 import { format } from 'date-fns';
 import { parseUTC } from '@/lib/utils';
+import { useAuthStore } from '@/stores/auth.store';
 
 export default function DashboardPage() {
+  const { user } = useAuthStore();
   const { data: journals, isLoading } = useQuery({
     queryKey: ['journals'],
     queryFn: () => JournalService.getJournals(50, 0),
@@ -23,7 +25,6 @@ export default function DashboardPage() {
     }
   });
 
-  // Calculate Streak
   let streak = 0;
   let hasCheckedInToday = false;
   let todayJournal = null;
@@ -64,7 +65,6 @@ export default function DashboardPage() {
     }
   }
 
-  // Calculate Mental State for today
   let mentalPercentage = 0;
   let MentalIcon = Meh;
   let mentalColor = 'text-zinc-400';
@@ -78,7 +78,7 @@ export default function DashboardPage() {
     else if (sleep_hours >= 5) sleepScore = 3;
     else if (sleep_hours >= 4) sleepScore = 2;
 
-    const stressScore = 6 - stress; 
+    const stressScore = 6 - stress;
     const avgScore = (mood + stressScore + energy + sleepScore) / 4;
     mentalPercentage = Math.round((avgScore / 5) * 100);
 
@@ -107,8 +107,12 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      
-      {/* Top Row: Streak, Mental State, Check-in */}
+
+      <div className="mb-2">
+        <h1 className="text-3xl font-bold text-zinc-900">Good Morning, {user?.email?.split('@')[0] || 'User'}</h1>
+        <p className="text-zinc-500 mt-2">Let's check in with yourself today.</p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
           <Card className="border-0 shadow-sm h-full flex flex-col justify-center items-center py-6">
@@ -168,7 +172,7 @@ export default function DashboardPage() {
         <div className="md:col-span-2">
           <TrendChart data={chartData} />
         </div>
-        
+
         <div className="flex flex-col space-y-6">
           <Card className="border-0 shadow-sm bg-zinc-900 text-zinc-50 flex-1">
             <CardHeader>

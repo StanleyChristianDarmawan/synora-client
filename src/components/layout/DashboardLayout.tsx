@@ -1,4 +1,3 @@
-import { Sidebar } from '@/components/layout/sidebar';
 import { Navbar } from '@/components/layout/navbar';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate, Outlet } from 'react-router-dom';
@@ -9,19 +8,14 @@ export function DashboardLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // For demo purposes, bypassing auth redirect if not strictly tested
-    // if (!isAuthenticated) navigate('/login');
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="flex h-screen bg-[#FAFAFA] overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        <Navbar />
-        <main className="flex-1 overflow-y-auto p-8">
-          <Outlet />
-        </main>
-      </div>
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
+      <Navbar />
+      <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8">
+        <Outlet />
+      </main>
     </div>
   );
 }

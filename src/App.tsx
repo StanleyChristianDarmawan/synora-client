@@ -12,6 +12,7 @@ import ChatPage from '@/pages/dashboard/Chat';
 import CheckinPage from '@/pages/dashboard/Checkin';
 import ReflectionPage from '@/pages/dashboard/Reflection';
 import HistoryPage from '@/pages/dashboard/History';
+import ProfilePage from '@/pages/dashboard/Profile';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/checkin" element={<CheckinPage />} />
             <Route path="/reflection" element={<ReflectionPage />} />
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </Router>
